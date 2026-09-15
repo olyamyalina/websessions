@@ -12,7 +12,7 @@ class RPCError(RuntimeError):
 
 class RPCClient:
 
-    OPERATIONS = {
+    operations = {
         "create_account": 1,
         "get_all_accounts": 2,
         "get_account_by_uid": 3,
@@ -38,7 +38,7 @@ class RPCClient:
         self.timeout = timeout
 
     def _call(self, name: str, **arguments: Any) -> Any:
-        operation = self.OPERATIONS[name]
+        operation = self.operations[name]
         with socket.create_connection(self.address, self.timeout) as connection:
             send_packet(connection, operation, arguments)
             response_operation, response = read_packet(connection)

@@ -390,29 +390,35 @@ def handle_feedback_command(current_choice):
             handle_edit_feedback()
 
 
+def process_command(current_choice):
+    match current_choice:
+        case "help":
+            show_commands()
+        case "test_model":
+            test_model()
+        case "get_data_sample":
+            print(f"Результат выборки: {get_data_sample()}")
+        case "exit":
+            print("Выход из программы.")
+            return False
+        case command if command in ACCOUNT_COMMANDS:
+            handle_account_command(command)
+        case command if command in MESSAGE_COMMANDS:
+            handle_message_command(command)
+        case command if command in FEEDBACK_COMMANDS:
+            handle_feedback_command(command)
+        case _:
+            print("Неизвестная команда.")
+    return True
+
+
 def repl():
     show_commands()
     while True:
         try:
             current_choice = input("Введите команду: ").strip()
-            match current_choice:
-                case "help":
-                    show_commands()
-                case "test_model":
-                    test_model()
-                case "get_data_sample":
-                    print(f"Результат выборки: {get_data_sample()}")
-                case "exit":
-                    print("Выход из программы.")
-                    break
-                case command if command in ACCOUNT_COMMANDS:
-                    handle_account_command(command)
-                case command if command in MESSAGE_COMMANDS:
-                    handle_message_command(command)
-                case command if command in FEEDBACK_COMMANDS:
-                    handle_feedback_command(command)
-                case _:
-                    print("Неизвестная команда.")
+            if not process_command(current_choice):
+                break
         except ValueError as error:
             print(f"Ошибка: {error}")
         except (KeyboardInterrupt, EOFError):

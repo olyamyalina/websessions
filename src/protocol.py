@@ -6,6 +6,8 @@ from typing import Any
 
 HEADER_SIZE = 4
 MAX_BODY_SIZE = (1 << 24) - 1
+MIN_OPERATION_CODE = 0
+MAX_OPERATION_CODE = (1 << 8) - 1
 
 
 def _receive_exact(connection: socket.socket, size: int) -> bytes:
@@ -22,7 +24,7 @@ def _receive_exact(connection: socket.socket, size: int) -> bytes:
 
 def encode_packet(operation: int, payload: Any) -> bytes:
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    if not 0 <= operation <= 255:
+    if not MIN_OPERATION_CODE <= operation <= MAX_OPERATION_CODE:
         raise ValueError("Код операции должен занимать один байт")
     if len(body) > MAX_BODY_SIZE:
         raise ValueError("Тело пакета превышает размер трехбайтового поля")
