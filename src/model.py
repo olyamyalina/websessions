@@ -1,6 +1,5 @@
 import datetime
 
-
 SAMPLE_WINDOW_SECONDS = 8 * 60
 
 accounts = []
