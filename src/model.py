@@ -163,25 +163,51 @@ def edit_feedback(
 
 
 def get_data_sample():
-    result = []
     current_timestamp = int(datetime.datetime.now().timestamp())
     time_limit = current_timestamp - SAMPLE_WINDOW_SECONDS
 
+    joined_rows = []
+    matched_message_uids = set()
+
     for account in accounts:
-        if account[1] >= time_limit:
-            account_messages = [
-                message
-                for message in messages
-                if message[3] == account[0]
-            ]
+        account_messages = [
+            message
+            for message in messages
+            if account[0] == message[3]
+        ]
 
-            for message in account_messages:
-                result.append((account[2], message[2]))
+        if account_messages:
+            joined_rows.extend(
+                (account, message)
+                for message in account_messages
+            )
+            matched_message_uids.update(
+                message[0]
+                for message in account_messages
+            )
+        else:
+            joined_rows.append((account, None))
 
-            if not account_messages:
-                result.append((account[2], message[2]))
+    joined_rows.extend(
+        (None, message)
+        for message in messages
+        if message[0] not in matched_message_uids
+    )
 
-    return result
+    selected_rows = [
+        (account, message)
+        for account, message in joined_rows
+        if account is not None
+        and account[1] >= time_limit
+    ]
+
+    return [
+        (
+            account[2],
+            message[2] if message is not None else None,
+        )
+        for account, message in selected_rows
+    ]
 
 
 def show_expected_error(function, *args):

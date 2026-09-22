@@ -183,7 +183,8 @@ class RPCStateMachine(RuleBasedStateMachine):
                 if row[3] == account[0]
             ]
             result.extend((account[2], value) for value in arguments)
-
+            if not arguments:
+                result.append((account[2], None))
         return result
 
     def teardown(self) -> None:
