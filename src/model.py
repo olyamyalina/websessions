@@ -179,7 +179,7 @@ def get_data_sample():
                 result.append((account[2], message[2]))
 
             if not account_messages:
-                result.append((account[2], None))
+                result.append((account[2], message[2]))
 
     return result
 
